@@ -24,58 +24,18 @@ sudo tar -xvf /tmp/artusers.tar -C "/Library/User Pictures"
 # cleanup any temp files
 sudo rm /tmp/artusers*
 
-sudo dscl . create /Users/period1 UserShell /bin/bash
-sudo dscl . create /Users/period1 RealName "Period 1"
-sudo dscl . create /Users/period1 UniqueID "701"
-sudo dscl . create /Users/period1 PrimaryGroupID 20
-sudo dscl . create /Users/period1 NFSHomeDirectory /Local/Users/period1
-sudo dscl . -passwd /Users/period1
-sudo dscl . create /Users/period1 Picture "/Library/User Pictures/kermit.tif"
+declare -a users=("Period 1" "Period 2" "Period 3" "Period 4" "Period 5" "Period 6" "Period 7")
 
-sudo dscl . create /Users/period2 UserShell /bin/bash
-sudo dscl . create /Users/period2 RealName "Period 2"
-sudo dscl . create /Users/period2 UniqueID "702"
-sudo dscl . create /Users/period2 PrimaryGroupID 20
-sudo dscl . create /Users/period2 NFSHomeDirectory /Local/Users/period2
-sudo dscl . -passwd /Users/period2
-sudo dscl . create /Users/period2 Picture "/Library/User Pictures/piggy.tif"
+for i in "${!users[@]}"
+do
+shortName=$(echo -e ${users[$i]} | tr -d '[:space:]' | awk '{print tolower($0)}')
 
-sudo dscl . create /Users/period3 UserShell /bin/bash
-sudo dscl . create /Users/period3 RealName "Period 3"
-sudo dscl . create /Users/period3 UniqueID "703"
-sudo dscl . create /Users/period3 PrimaryGroupID 20
-sudo dscl . create /Users/period3 NFSHomeDirectory /Local/Users/period3
-sudo dscl . -passwd /Users/period3
-sudo dscl . create /Users/period3 Picture "/Library/User Pictures/fozzie.tif"
+sudo dscl . create /Users/$shortName UserShell /bin/bash
+sudo dscl . create /Users/$shortName RealName "${users[$i]}"
+sudo dscl . create /Users/$shortName UniqueID "70$(($i + 1))"
+sudo dscl . create /Users/$shortName PrimaryGroupID 20
+sudo dscl . create /Users/$shortName NFSHomeDirectory /Users/$shortName
+sudo dscl . -passwd /Users/$shortName
+sudo dscl . create /Users/$shortName Picture "/Library/User Pictures/$shortName.tif"
 
-sudo dscl . create /Users/period4 UserShell /bin/bash
-sudo dscl . create /Users/period4 RealName "Period 4"
-sudo dscl . create /Users/period4 UniqueID "704"
-sudo dscl . create /Users/period4 PrimaryGroupID 20
-sudo dscl . create /Users/period4 NFSHomeDirectory /Local/Users/period4
-sudo dscl . -passwd /Users/period4
-sudo dscl . create /Users/period4 Picture "/Library/User Pictures/gonzo.tif"
-
-sudo dscl . create /Users/period5 UserShell /bin/bash
-sudo dscl . create /Users/period5 RealName "Period 5"
-sudo dscl . create /Users/period5 UniqueID "705"
-sudo dscl . create /Users/period5 PrimaryGroupID 20
-sudo dscl . create /Users/period5 NFSHomeDirectory /Local/Users/period5
-sudo dscl . -passwd /Users/period5
-sudo dscl . create /Users/period5 Picture "/Library/User Pictures/beaker.tif"
-
-sudo dscl . create /Users/period6 UserShell /bin/bash
-sudo dscl . create /Users/period6 RealName "Period 6"
-sudo dscl . create /Users/period6 UniqueID "706"
-sudo dscl . create /Users/period6 PrimaryGroupID 20
-sudo dscl . create /Users/period6 NFSHomeDirectory /Local/Users/period6
-sudo dscl . -passwd /Users/period6
-sudo dscl . create /Users/period6 Picture "/Library/User Pictures/animal.tif"
-
-sudo dscl . create /Users/period7 UserShell /bin/bash
-sudo dscl . create /Users/period7 RealName "Period 7"
-sudo dscl . create /Users/period7 UniqueID "707"
-sudo dscl . create /Users/period7 PrimaryGroupID 20
-sudo dscl . create /Users/period7 NFSHomeDirectory /Local/Users/period7
-sudo dscl . -passwd /Users/period7
-sudo dscl . create /Users/period7 Picture "/Library/User Pictures/rowlf.tif"
+done
