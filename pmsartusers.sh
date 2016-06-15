@@ -7,7 +7,7 @@
 #
 #
 #	Creates 7 local accounts, 1 for each period, for student use in the PMS Art iMac lab.
-#	The accounts are for organizational purposes only not security. Passwords are all blank.
+#	The accounts are for organizational purposes only, not security. Passwords are all blank.
 #	
 ########################################################################################################
 
