@@ -34,7 +34,7 @@ sudo dscl . create /Users/$shortName UserShell /bin/bash
 sudo dscl . create /Users/$shortName RealName "${users[$i]}"
 sudo dscl . create /Users/$shortName UniqueID "70$(($i + 1))"
 sudo dscl . create /Users/$shortName PrimaryGroupID 20
-sudo dscl . create /Users/$shortName NFSHomeDirectory /Local/Users/$shortName
+sudo dscl . create /Users/$shortName NFSHomeDirectory /Users/$shortName
 sudo dscl . -passwd /Users/$shortName
 sudo dscl . create /Users/$shortName Picture "/Library/User Pictures/$shortName.tif"
 
