@@ -138,7 +138,7 @@ echo -e "\n*********************************************************************
 echo "[$dateandtime]	[BEGIN]	removing managed settings for $computerName" >> $logFile
 
 
-( dsconfigldap -r $ldapServer -l localadmin -q '1day@time!'  && echo "[$dateandtime]	[INFO]	Removed LDAP server $ldapServer" >> $logFile ) || ( echo "[$dateandtime]	[ERROR]	Failed to remove LDAP server $ldapServer" >> $logFile  && exit 1 )# remove the OD mangement server binding
+( dsconfigldap -r $ldapServer -l localadmin -q '$PASSWORD'  && echo "[$dateandtime]	[INFO]	Removed LDAP server $ldapServer" >> $logFile ) || ( echo "[$dateandtime]	[ERROR]	Failed to remove LDAP server $ldapServer" >> $logFile  && exit 1 )# remove the OD mangement server binding
 ( dscl . -list Computers | grep "^localhost&" | while read computer_name ; do sudo dscl. -delete Computers/"$computer_name" ; done && echo "[$dateandtime]	[INFO]	Removed computer entry for $computerName" >> $logFile ) || ( echo "[$dateandtime] [ERROR]	Failed to remove computer entry for $computerName" >> $logFile  && exit 1 )# remove machine managed preferences
 ( rm -Rf /Library/Managed Preferences  && echo "[$dateandtime]	[INFO]	Removed /Library/Managed Preferences" >> $logFile ) || ( echo "[$dateandtime] [ERROR]	Failed to remove /Library/Managed Preferences" >> $logFile  && exit 1 )# remove cached user managed preferences
 ( dsconfigad -mobile disable -localhome disable   && echo "[$dateandtime]	[INFO]	Updated AD Plugin mobile account and local home preferences" >> $logFile ) || ( echo "[$dateandtime]	[INFO]	Failed to update AD Plugin mobile account and local home preferences" >> $logFile && exit 1 )
@@ -155,11 +155,14 @@ echo "[$dateandtime]	[BEGIN]	Setting user preferences" >> $logFile
 apps=("ADPassMon" "Google Drive" "Google Photos Backup")
 
 testapp () {
+
+	a=$(echo -e "${1}" | tr -d '[:space:]')
 	if [[ ! -d "/Applications/$1.app" ]]; then
-		( curl -o "/tmp/$1.zip" "http://brego/files/$1.zip" && ditto -V -x -k --sequesterRsrc --rsrc "/tmp/$1.zip" /Applications/ && echo "[$dateandtime]	[INFO]	Installed $1" >> $logFile ) || echo "[$dateandtime]	[ERROR]	Failed to install $1" >> $logFile
+#	echo $a
+		curl -o "/tmp/$1.zip" "http://brego/files/$a.zip" && ditto -V -x -k --sequesterRsrc --rsrc "/tmp/$1.zip" /Applications
 		rm "/tmp/$1.zip"
 	else
-		echo "[$dateandtime]	[INFO]	$1 is already installed" >> $logFile
+		:
 	fi;
 }
 
@@ -177,7 +180,9 @@ su $uName -c 'defaults write org.pmbuko.ADPassMon allowPasswordChange -bool fals
 su $uName -c 'defaults write org.pmbuko.ADPassMon pwPolicy "Click OK to visit OWA and change\nyour NETWORK/EMAIL password.\n\n**This WILL NOT change your laptop or Google passwords**."' &&
 su $uName -c 'defaults write org.pmbuko.ADPassMon pwPolicyURLButtonTitle "OK"' &&
 su $uName -c 'defaults write org.pmbuko.ADPassMon pwPolicyURLButtonURL "https://mail.portsmouth.k12.nh.us/ecp/?rfr=owa&owaparam=modurl%3D0&p=PersonalSettings/Password.aspx"' &&
-su $uName -c 'defaults write org.pmbuko.ADPassMon accTest 0' && echo "[$dateandtime]	[INFO]	Set ADPassMon preferences" >> $logFile ) || echo "[$dateandtime]	[ERROR]	Failed to set ADPassMon preferences" >> $logFile )
+su $uName -c 'defaults write org.pmbuko.ADPassMon accTest 0' && echo "[$dateandtime]	[INFO]	Set ADPassMon preferences." >> $logFile ) || echo "[$dateandtime]	[ERROR]	Failed to set ADPassMon preferences." >> $logFile )
+
+( lpstat -p | grep printer | cut -d" " -f2 | xargs -I {} lpadmin -p {} -o printer-is-shared=False && echo "[$dateandtime]	[INFO]	Turned off printer sharing" >> $logFile ) || echo "[$dateandtime]	[ERROR]	Failed to tur noff printer sharing." >> $logFile
 
 removeMenuItem () {
 plbuddy="/usr/libexec/PlistBuddy"
